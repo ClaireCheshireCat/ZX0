@@ -41,7 +41,7 @@ int elias_gamma_bits(int value) {
     return bits;
 }
 
-BLOCK* optimize(unsigned char *input_data, int input_size, int skip, int offset_limit) {
+BLOCK* optimize(unsigned char *input_data, int input_size, int skip, int offset_limit, int verbose_mode) {
     BLOCK **last_literal;
     BLOCK **last_match;
     BLOCK **optimal;
@@ -66,13 +66,13 @@ BLOCK* optimize(unsigned char *input_data, int input_size, int skip, int offset_
         fprintf(stderr, "Error: Insufficient memory\n");
         exit(1);
     }
-    if (input_size > 2)
-        best_length[2] = 2;
+    best_length[2] = 2;
 
     /* start with fake block */
     assign(&last_match[INITIAL_OFFSET], allocate(-1, skip-1, INITIAL_OFFSET, NULL));
 
-    printf("[");
+    if(verbose_mode==TRUE)
+        printf("[");
 
     /* process remaining bytes */
     for (index = skip; index < input_size; index++) {
@@ -124,15 +124,19 @@ BLOCK* optimize(unsigned char *input_data, int input_size, int skip, int offset_
             }
         }
 
-        /* indicate progress */
-        if (index*MAX_SCALE/input_size > dots) {
-            printf(".");
-            fflush(stdout);
-            dots++;
+        if(verbose_mode==TRUE)
+        {
+            /* indicate progress */
+            if (index*MAX_SCALE/input_size > dots) {
+                printf(".");
+                fflush(stdout);
+                dots++;
+            }
         }
     }
 
-    printf("]\n");
+    if(verbose_mode==TRUE)
+        printf("]\n");
 
     return optimal[input_size-1];
 }
