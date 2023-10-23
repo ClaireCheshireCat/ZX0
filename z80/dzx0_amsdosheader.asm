@@ -11,7 +11,7 @@
 
 ; in a header, the 32 first bytes are used by the Amsdos
 
-        org #A7E4
+        org #2000-#80 // #A7E4
 
         defs 32,0
 
